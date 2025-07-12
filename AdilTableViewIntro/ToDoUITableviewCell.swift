@@ -2,6 +2,9 @@ import UIKit
 
 class ToDoUITableviewCell: UITableViewCell {
     
+    var task: Todo?
+    var delegate: ToDoUITableViewCellDelegate?
+    var index: Int = 0
     
     lazy var nameLabel: UILabel = {
         let label = UILabel()
@@ -30,15 +33,25 @@ class ToDoUITableviewCell: UITableViewCell {
     }()
     
     @objc func someAction() {
-        
+        print("task is done")
+        delegate?.buttonTapped(at: index)
+    }
+    
+    func setUp(task: Todo) {
+        self.task = task
+        nameLabel.text = task.name
+        descriptionLabel.text = task.dueDate.ISO8601Format()
+        let imageName = task.isDone ? "checkmark.square" : "square"
+        let image = UIImage(systemName: imageName)
+        button.setImage(image, for: .normal)
     }
 
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.addSubview(nameLabel)
-        self.addSubview(descriptionLabel)
-        self.addSubview(button)
+        contentView.addSubview(nameLabel)
+        contentView.addSubview(descriptionLabel)
+        contentView.addSubview(button)
         
         
         nameLabel.snp.makeConstraints { make in
@@ -61,5 +74,9 @@ class ToDoUITableviewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+}
 
+
+protocol ToDoUITableViewCellDelegate {
+    func buttonTapped(at index: Int)
 }

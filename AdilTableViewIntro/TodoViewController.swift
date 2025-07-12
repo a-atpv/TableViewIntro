@@ -9,7 +9,9 @@ import UIKit
 
 class TodoViewController: UIViewController {
     
-    var todos: [String] = ["task 1", "task2", "task3"]
+    var todos: [Todo] = [
+        Todo(name: "Clean home", dueDate: Date(), isDone: true)
+    ]
     
     lazy var toDoTable: UITableView = {
         let table = UITableView()
@@ -40,13 +42,27 @@ extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? ToDoUITableviewCell else { return UITableViewCell() }
-        cell.nameLabel.text = todos[indexPath.row]
+        cell.delegate = self
+        let task = todos[indexPath.row]
+        cell.setUp(task: task)
+        cell.index = indexPath.row
         return cell
     }
     
     
 }
 
-//class Todo{
-//    name , duedate, isDone
-//}
+extension TodoViewController: ToDoUITableViewCellDelegate {
+    
+    func buttonTapped(at index: Int) {
+        todos[index].isDone.toggle()
+        toDoTable.reloadData()
+    }
+    
+}
+
+struct Todo {
+    var name: String
+    var dueDate: Date
+    var isDone: Bool
+}
